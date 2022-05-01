@@ -1,7 +1,7 @@
 # README
 This folder contains the scripts and data that were used to produce the stimuli used in the two experiments. The files are outlined below.
 
-Note that these files are purely for transparency for how the stimuli were produced. The actual stimuli used in the two experiments are available on the [OSF repository](https://osf.io/q9z2m/).
+_Note that these files are purely for transparency for how the stimuli were produced._ The actual stimuli used in the two experiments are available on the [OSF repository](https://osf.io/q9z2m/).
 
 ## Files list
 ### Experiment 1
