@@ -1,6 +1,8 @@
 # README
 This folder contains the scripts and data that were used to produce the stimuli used in the two experiments. The files are outlined below.
 
+Note that these files are purely for transparency for how the stimuli were produced. The actual stimuli used in the two experiments are available on the [OSF repository](https://osf.io/q9z2m/).
+
 ## Files list
 ### Experiment 1
 - **create_input_exp1.py**: Script to produce the stimuli. It is written in blocks for use in Spyder. These blocks are divided into two main parts: 1) select pairs groups of 3 point pairs for each baboon with comparable baseline RTs to be employed as the AB stimuli in the experiment, and 2) produce the stimuli files with the regularities in the designated positions and fill in the random noise points. 
