@@ -1,0 +1,142 @@
+---
+title: "Appendixes"
+
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
+library(pander)
+```
+
+# Appendix A
+## Mean response times over the entire group of baboons for each of the 72 possible transitions calculated from the 1000 random trials
+```{r,appendixA,echo=F}
+rndTimes <- read_csv('data/rndTimes.csv',show_col_types = FALSE) %>%
+  filter(start != '#')
+
+rndTimes.tbl <- rndTimes %>%
+  select(start,stop,oldTime) %>%
+  arrange(start,stop) %>%
+  pivot_wider(names_from = stop,values_from = oldTime) %>%
+  select(start,`1`,`2`,`3`,`4`,`5`,`6`,`7`,`8`,`9`)
+
+rndTimes.tbl %>%
+  pander()
+```
+
+_Note._ All transitions are in milliseconds (ms) and correspond to the time elapsed between the disappearance of the red circle from the 1st position of the Transition and the monkey’s touch on the 2nd position of the Transition.
+
+\newpage
+# Appendix B
+## Repartition of AB pairs learned by each baboon in Experiment 1 and corresponding baseline mean transition times 
+```{r appendixB,echo=F}
+exp1.stim <- read.table('data/metaInfo_exp1.txt',sep = '\t', header = TRUE) %>%
+  merge(read_csv('data/babIDs.csv',show_col_types = FALSE) %>%
+          rename(Nom = name)) %>%
+  filter(babNum < 21) %>%
+  mutate(ABXX = case_when(strucOrder %in% c('1, 2, 3','1, 3, 2') ~ reg1,
+                          strucOrder %in% c('2, 1, 3','3, 1, 2') ~ reg2,
+                          strucOrder %in% c('3, 2, 1','2, 3, 1') ~ reg3),
+         XABX = case_when(strucOrder %in% c('2, 1, 3','2, 3, 1') ~ reg1,
+                          strucOrder %in% c('1, 2, 3','3, 2, 1') ~ reg2,
+                          strucOrder %in% c('3, 1, 2','1, 3, 2') ~ reg3),
+         XXAB = case_when(strucOrder %in% c('3, 2, 1','3, 1, 2') ~ reg1,
+                          strucOrder %in% c('2, 3, 1','1, 3, 2') ~ reg2,
+                          strucOrder %in% c('1, 2, 3','2, 1, 3') ~ reg3),
+         `ABXX baseline` = case_when(strucOrder %in% c('1, 2, 3','1, 3, 2') ~ reg1RT,
+                          strucOrder %in% c('2, 1, 3','3, 1, 2') ~ reg2RT,
+                          strucOrder %in% c('3, 2, 1','2, 3, 1') ~ reg3RT),
+         `XABX baseline` = case_when(strucOrder %in% c('2, 1, 3','2, 3, 1') ~ reg1RT,
+                          strucOrder %in% c('1, 2, 3','3, 2, 1') ~ reg2RT,
+                          strucOrder %in% c('3, 1, 2','1, 3, 2') ~ reg3RT),
+         `XXAB baseline` = case_when(strucOrder %in% c('3, 2, 1','3, 1, 2') ~ reg1RT,
+                          strucOrder %in% c('2, 3, 1','1, 3, 2') ~ reg2RT,
+                          strucOrder %in% c('1, 2, 3','2, 1, 3') ~ reg3RT)) %>%
+  select(Nom,babNum,strucOrder,ABXX,XABX,XXAB) %>%
+  rename(Name = Nom,ID = babNum,`Position order` = strucOrder) %>%
+  mutate(ABXX = substr(ABXX,2,5),
+         XABX = substr(XABX,2,5),
+         XXAB = substr(XXAB,2,5))
+
+exp1.stim %>%
+  pander(split.cell=10,
+         justify = c('left','center','center','center','center','center'))
+```
+
+\newpage
+# Appendix C
+## Repartition of AB pairs learned by each baboon in Experiment 2 and corresponding baseline mean transition times 
+```{r,appendixC,echo=F}
+exp2.stim <- read_csv('data/targetpairs_exp2.csv',show_col_types = FALSE) %>%
+  merge(read_csv('data/babs_by_exp.csv',show_col_types = FALSE) %>%
+          filter(expNum == 2) %>%
+          select(-c(cond,expNum,condition))) %>%
+  distinct() %>%
+  merge(rndTimes %>%
+          select(ptPair,baseRt,start,stop) %>%
+          rename(targetPair = ptPair)) %>%
+  mutate(stim = paste(start,', ',stop,sep=''),
+         baseRt = round(baseRt)) %>%
+  select(name,longsequence,baseRt,stim,babNum) %>%
+  pivot_wider(names_from = longsequence,values_from = c(stim,baseRt)) %>%
+  rename(`Var-4` = stim_4, 
+         `Var-5` = stim_5, 
+         `Var-4\nbaseline` = baseRt_4,
+         `Var-5 baseline` = baseRt_5,
+         Name = name,
+         ID = babNum) %>%
+  select(Name,ID,`Var-4`,`Var-5`) %>%
+  arrange(ID)
+exp2.stim %>%
+  pander(justify = c('left','center','center','center'))
+```
+
+\newpage
+# Appendix D
+## Results from Linear Mixed-Effects modeling analysis
+The same model was fit with each of the four conditions (`cond`) from Experiment 1 as the baseline:
+
+```{r condTable,echo=F}
+t <- matrix(c('rnd','random baseline condition','pos1','ABXX','pos2','XABX','pos3','XXAB'),
+            nrow=4,ncol=2,byrow=T)
+as.data.frame(t) %>%
+  rename(`Variable name` = V1, `Condition name` = V2) %>%
+  pander(justify = c('left','left'))
+```
+
+Because models which used `trial number` as a variable did not converge, trials were grouped into groups of 20 and this is the slope term in the models (`trl20`).
+
+For the other model terms, `rtVal` is the response time in milliseconds, `name` is the identifier for each baboon, and `ptPair` are the unique pairs of start and stop points on the screen. 
+
+In each case, we find that a) all conditions have a negative slope above chance except the random condition, and b) the regularity conditions (ABXX, XABX, XXAB) differ from the random baseline condition, but do not significantly differ from one another. While this presents promising evidence, the absence of an effect is not the same as evidence for the null, which is why we switched our analysis over to the Bayesian framework.
+```{r lmers.0,echo=F,message=F,results='hide'}
+load('data/X1_LMER_models.RData')
+```
+\newpage
+### Random condition as baseline
+```{r lmer.rnd,echo=F,message=F}
+summary(exp1.rnd.lmer)
+```
+\newpage
+### ABXX condition as baseline
+```{r lmer.pos1,echo=F,message=F}
+summary(exp1.pos1.lmer)
+```
+\newpage
+### XABX condition as baseline
+```{r lmer.pos2,echo=F,message=F}
+summary(exp1.pos2.lmer)
+```
+\newpage
+### XXAB condition as baseline
+```{r lmer.pos3,echo=F,message=F}
+summary(exp1.pos3.lmer)
+```
+
+
+
