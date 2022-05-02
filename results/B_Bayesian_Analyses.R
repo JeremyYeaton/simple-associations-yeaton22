@@ -6,7 +6,6 @@
 library(tidyverse)
 library(BayesFactor)
 library(pracma)
-library(coda)
 library(tie)
 
 # Read in data ------------------------------------------------------------
