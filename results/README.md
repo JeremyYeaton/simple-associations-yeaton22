@@ -10,11 +10,8 @@ This directory contains all of the preprocessing and analysis code. The contents
 This pipeline relies on the following R packages:
   
 - [tidyverse](https://www.tidyverse.org/)
-
 - [BayesFactor](https://cran.r-project.org/web/packages/BayesFactor/index.html)
-
 - [pracma](https://cran.r-project.org/web/packages/pracma/index.html)
-
 - [tie](https://rdrr.io/github/romainfrancois/tie/)
 
 - [ggpubr](https://cran.r-project.org/web/packages/ggpubr/index.html)
