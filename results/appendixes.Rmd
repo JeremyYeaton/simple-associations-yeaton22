@@ -16,7 +16,7 @@ library(pander)
 # Appendix A
 ## Mean response times over the entire group of baboons for each of the 72 possible transitions calculated from the 1000 random trials
 ```{r,appendixA,echo=F}
-rndTimes <- read_csv('data/rndTimes.csv',show_col_types = FALSE) %>%
+rndTimes <- read_csv('results/data/rndTimes.csv',show_col_types = FALSE) %>%
   filter(start != '#')
 
 rndTimes.tbl <- rndTimes %>%
@@ -35,8 +35,8 @@ _Note._ All transitions are in milliseconds (ms) and correspond to the time elap
 # Appendix B
 ## Repartition of AB pairs learned by each baboon in Experiment 1 and corresponding baseline mean transition times 
 ```{r appendixB,echo=F}
-exp1.stim <- read.table('data/metaInfo_exp1.txt',sep = '\t', header = TRUE) %>%
-  merge(read_csv('data/babIDs.csv',show_col_types = FALSE) %>%
+exp1.stim <- read.table('results/data/metaInfo_exp1.txt',sep = '\t', header = TRUE) %>%
+  merge(read_csv('results/data/babIDs.csv',show_col_types = FALSE) %>%
           rename(Nom = name)) %>%
   filter(babNum < 21) %>%
   mutate(ABXX = case_when(strucOrder %in% c('1, 2, 3','1, 3, 2') ~ reg1,
@@ -72,8 +72,8 @@ exp1.stim %>%
 # Appendix C
 ## Repartition of AB pairs learned by each baboon in Experiment 2 and corresponding baseline mean transition times 
 ```{r,appendixC,echo=F}
-exp2.stim <- read_csv('data/targetpairs_exp2.csv',show_col_types = FALSE) %>%
-  merge(read_csv('data/babs_by_exp.csv',show_col_types = FALSE) %>%
+exp2.stim <- read_csv('results/data/targetpairs_exp2.csv',show_col_types = FALSE) %>%
+  merge(read_csv('results/data/babs_by_exp.csv',show_col_types = FALSE) %>%
           filter(expNum == 2) %>%
           select(-c(cond,expNum,condition))) %>%
   distinct() %>%
@@ -115,7 +115,7 @@ For the other model terms, `rtVal` is the response time in milliseconds, `name` 
 
 In each case, we find that a) all conditions have a negative slope above chance except the random condition, and b) the regularity conditions (ABXX, XABX, XXAB) differ from the random baseline condition, but do not significantly differ from one another. While this presents promising evidence, the absence of an effect is not the same as evidence for the null, which is why we switched our analysis over to the Bayesian framework.
 ```{r lmers.0,echo=F,message=F,results='hide'}
-load('data/X1_LMER_models.RData')
+load('results/data/X1_LMER_models.RData')
 ```
 \newpage
 ### Random condition as baseline

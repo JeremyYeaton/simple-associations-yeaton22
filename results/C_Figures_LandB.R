@@ -9,7 +9,7 @@ library(viridis)
 library(broom)
 
 # Read in data & model objects --------------------------------------------
-source('scripts/B_Run_Bayesian_Analyses.R')
+source('results/B_Bayesian_Analyses.R')
 # Clean up workspace
 rm(bf.both,bf.both.nornd,bf.exp1,bf.exp1.nornd,exp1_pairWiseBFs,
    exp2_pairWiseBFs,post.exp1,post.exp2) 
@@ -144,16 +144,16 @@ exp2.dense.plot
 ## Save figures ####
 # Figure 2
 exemplar.plot %>%
-  ggsave(filename = 'figures/exemplar.jpeg',plot=.,width= 16,height=9,units='cm')
+  ggsave(filename = 'results/figures/exemplar.jpeg',plot=.,width= 16,height=9,units='cm')
 
 # Figure 3
 exp1.results <- ggarrange(exp1.slopes.plot,exp1.dense.plot,ncol=1,labels=c('A','B'))
 exp1.results
 exp1.results %>%
-  ggsave('figures/exp1_results.jpeg',plot=.,width = 12,height=12,units='cm')
+  ggsave('results/figures/exp1_results.jpeg',plot=.,width = 12,height=12,units='cm')
 
 # Figure 4
 exp2.results <- ggarrange(exp2.slopes.plot,exp2.dense.plot,ncol=1,labels=c('A','B'))
 exp2.results
 exp2.results %>%
-  ggsave('figures/exp2_results.jpeg',plot=.,width = 12,height=12,units='cm')
+  ggsave('results/figures/exp2_results.jpeg',plot=.,width = 12,height=12,units='cm')

@@ -13,7 +13,7 @@ rtMax = 800
 # Experiment 1 ------------------------------------------------------------
 
 # Read in raw data
-raw_exp1 <- read_delim('data/results_raw_exp1.txt', delim='\t',col_types=cols()) %>%
+raw_exp1 <- read_delim('results/data/results_raw_exp1.txt', delim='\t',col_types=cols()) %>%
   # Get rid of unnecessary columns
   select(-c(Programme,Manip,Famille,reward,Test,target6,target7,target8,
             target9,target10,target11,target12,rt5,rt6,rt7,rt8,rt9,rt10,rt11,
@@ -28,8 +28,8 @@ trialCounts <- raw_exp1 %>%
   summarise(nTrials = n(),.groups='keep')
 
 # Read in meta and group information (mostly about blocks and block orders)
-brut_exp1 <- read.table('data/metaInfo_exp1.txt',sep = '\t', header = TRUE) %>%
-  merge(read_csv('data/groupInfo.csv',col_types = cols()), by = 'group') %>%
+brut_exp1 <- read.table('results/data/metaInfo_exp1.txt',sep = '\t', header = TRUE) %>%
+  merge(read_csv('results/data/groupInfo.csv',col_types = cols()), by = 'group') %>%
   # Select useful columns
   select(c('Nom','group','pos1','pos2','pos3','blockType','blockOrder','nObjAtteint','typeOrder')) %>%
   # More transparent names
@@ -101,7 +101,7 @@ print(paste('Exp 1:',exp1.loss))
 # Random sequencing times -------------------------------------------------
 
 # Read in times from previous 6-touch experiment
-old_rnd_times <- read_csv('data/transitionTimes.csv',col_types = cols()) %>%
+old_rnd_times <- read_csv('results/data/transitionTimes.csv',col_types = cols()) %>%
   rename(start = Pos1,
          stop = Pos2,
          oldTime = time) %>%
@@ -120,7 +120,7 @@ rndTimes <- exp1 %>%
 # Experiment 2 ------------------------------------------------------------
 
 # Read in raw data from site
-raw_exp2 <- read_delim('data/results_raw_exp2.txt',delim='\t',col_types = cols()) %>%
+raw_exp2 <- read_delim('results/data/results_raw_exp2.txt',delim='\t',col_types = cols()) %>%
   # Drop unnecessary columns
   select(Nom,Date,Heure,Box,Sexe,nObjAtteint,Age,nessai,Mois,HH,Score,longsequence,
          target1,target2,target3,target4,target5,rt1,rt2,rt3,rt4,rt5) %>%
@@ -133,7 +133,7 @@ brut_exp2 <- raw_exp2 %>%
   summarize(numFinished = n(),.groups='keep') %>%
   merge(raw_exp2)%>%
   # Read in target pairs for experimental trials
-  merge(read_csv('data/targetpairs_exp2.csv',col_types = cols())) %>%
+  merge(read_csv('results/data/targetpairs_exp2.csv',col_types = cols())) %>%
   # Identify experimental vs warm-up trials
   mutate(cond = ifelse(rawBlock %in% c(0,1,7,8),'rnd','var')) %>%
   # Clean up block identifiers
@@ -211,15 +211,15 @@ bothExp <- rbind(exp1,exp2) %>%
   merge(rbind(exp1,exp2))
 
 # Write data to file
-write_csv(bothExp,'data/both_experiments.csv')
-write_csv(rndTimes,'data/rndTimes.csv')
+write_csv(bothExp,'results/data/both_experiments.csv')
+write_csv(rndTimes,'results/data/rndTimes.csv')
 
 bothExp %>%
   select(babNum,name) %>%
   mutate(babNum = as.numeric(babNum)) %>%
   # filter(babNum < 21) %>%
   distinct() %>%
-  write_csv(.,'data/babIDs.csv')
+  write_csv(.,'results/data/babIDs.csv')
 
 # Clean up workspace
 rm(old_rnd_times,brut_exp1,brut_exp2,exp1,exp2,raw_exp1,raw_exp2,trialCounts)

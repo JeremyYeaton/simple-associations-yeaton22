@@ -10,7 +10,7 @@ library(tie)
 
 # Read in data ------------------------------------------------------------
 # source('scripts/A_Preprocessing.R')
-bothExp <- read_csv('data/both_experiments.csv',col_types = cols())
+bothExp <- read_csv('results/data/both_experiments.csv',col_types = cols())
 
 # Experiment 1 ------------------------------------------------------------
 # Get slopes
