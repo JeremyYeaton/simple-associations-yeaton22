@@ -101,6 +101,7 @@ exp1_lims <- exp1_post.df %>%
 
 # Figure 3B
 exp1.dense.plot <- ggplot() +
+  # geom_point(aes(x=slope, y=0, color= cond),data=slopes_exp1, shape=3, size = 5) +
   geom_density(aes(x=value,color = condition),size = .75,data=exp1_post.df) +
   geom_errorbarh(aes(xmin=lowbound,xmax=highbound,y=maxy+1,color = condition),
                  size=.5,
@@ -129,16 +130,17 @@ exp2_lims <- exp2_post.df %>%
 
 # Figure 4B
 exp2.dense.plot <- ggplot() +
+  # geom_point(aes(x=slope, y=0, color= condition),data=slopes_both, shape=3, size = 5) +
   geom_density(aes(x=value,color = condition),size = .75,data=exp2_post.df) +
   geom_errorbarh(aes(xmin=lowbound,xmax=highbound,y=maxy+1,color = condition),
-                 size=.5,
+                 linewidth=.5,
                  height=1.25,
                  data=exp2_lims) +
   coord_cartesian(xlim = c(-.125,.125),ylim = c(-0.5,42)) +
   labs(x='Slope',y='Posterior density',color='Condition') +
   theme_bw() +
   theme(legend.position = 'none') +
-  scale_color_viridis(discrete=TRUE,begin=0,end=.9,option='A')
+  scale_color_viridis(discrete=TRUE,begin=0,end=.9,option='A') 
 exp2.dense.plot
 
 ## Save figures ####
@@ -157,3 +159,35 @@ exp2.results <- ggarrange(exp2.slopes.plot,exp2.dense.plot,ncol=1,labels=c('A','
 exp2.results
 exp2.results %>%
   ggsave('results/figures/exp2_results.jpeg',plot=.,width = 12,height=12,units='cm')
+
+## Empirical results: Supp. Fig. 1 ####
+# Get hex codes for colors
+scales::viridis_pal(begin=0,end=.9,option='D')(4)
+scales::viridis_pal(begin=0,end=.9,option='A')(4)
+
+slopes_box.plot <- slopes_exp1 %>%
+  mutate(exp = 'Exp. 1') %>%
+  rbind(slopes_both %>%
+          rename(cond=condition) %>%
+          mutate(exp='Exp. 2')) %>%
+  mutate(cond = case_when(cond == 'pos1' ~ 'ABXX',
+                          cond == 'pos2' ~ 'XABX',
+                          cond == 'pos3' ~ 'XXAB',
+                          cond == 'rnd' ~ 'Random',
+                          cond == 'fix4' ~ 'Fixed',
+                          cond == 'var4' ~ 'Variable-4',
+                          cond == 'var5' ~ 'Variable-5',
+                          cond =='rnd4' ~ 'Random')) %>%
+  mutate(cond = factor(cond,levels=c('Random','ABXX','XABX','XXAB','Fixed','Variable-4','Variable-5'))) %>%
+  ggplot() +
+  geom_boxplot(aes(x=cond,y=slope,color=cond,fill=cond),alpha=0.4) +
+  geom_point(aes(x=cond,y=slope,color=cond)) + 
+  facet_wrap(~exp,scales = 'free_x') +
+  theme_bw() +
+  theme(legend.position = 'none') +
+  labs(x='Condition',y='Observed slope') +
+  scale_fill_manual(values=c("#440154FF", "#35608DFF", "#22A884FF", "#BBDF27FF", "#641A80FF", "#DE4968FF", "#FECE91FF")) +
+  scale_color_manual(values=c("#440154FF", "#35608DFF", "#22A884FF", "#BBDF27FF", "#641A80FF", "#DE4968FF", "#FECE91FF"))
+slopes_box.plot
+slopes_box.plot %>%
+  ggsave('results/figures/slopes_boxplot.jpeg',plot=.,width = 18,height=9,units='cm')

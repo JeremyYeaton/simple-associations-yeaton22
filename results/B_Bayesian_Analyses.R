@@ -89,6 +89,11 @@ slopes_both <- bothExp %>%
   group_by(babNum,condition) %>%
   bow(tie(intercept,slope) := mldivide(cbind(allOnes,trialNum),rtVal))
 
+# Get average slope by condition
+slopes_both %>%
+  group_by(condition) %>%
+  summarize(mean(slope))
+
 # Calculate omnibus BF
 bf.both <- slopes_both %>%
   anovaBF(slope ~ condition * babNum, data = ., whichRandom = 'babNum')
